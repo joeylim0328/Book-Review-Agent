@@ -51,3 +51,48 @@ Style: Make it sound like a genuine reader sharing their thoughts, not a formal 
     )
 
     return response.choices[0].message.content
+
+
+def refine_book_review(
+    title: str,
+    author: str,
+    current_review: str,
+    improvement: str,
+    base_url: str = "http://localhost:11434/v1",
+) -> str:
+    """
+    Refine an existing 小红书 book review based on a requested improvement.
+
+    Args:
+        title: Book title
+        author: Book author
+        current_review: The review to refine
+        improvement: Specific improvement instruction
+        base_url: Ollama API base URL
+
+    Returns:
+        Refined Chinese book review
+    """
+    client = OpenAI(base_url=base_url, api_key="ollama")
+
+    system_prompt = """You are an expert at writing engaging book reviews for 小红书 (Xiaohongshu). 
+You understand 小红书's audience: young Chinese readers who prefer authentic, conversational content 
+with personal insights rather than formal literary analysis."""
+
+    user_prompt = f"""Here is an existing 小红书 book review for "{title}" by {author}:
+
+{current_review}
+
+Please rewrite this review applying the following improvement: {improvement}
+
+Keep all the original content, facts, and information intact — only apply the requested improvement to the tone, style, or structure. Output entirely in Chinese. Keep any closing English quote as-is."""
+
+    response = client.chat.completions.create(
+        model="gpt-oss",
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt},
+        ],
+    )
+
+    return response.choices[0].message.content

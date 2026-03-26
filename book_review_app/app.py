@@ -1,5 +1,7 @@
+import os
+
 import streamlit as st
-from review_agent import get_book_review
+from review_agent import get_book_review, refine_book_review
 
 st.set_page_config(
     page_title="📚 Joey's Book Review Agent",
@@ -25,10 +27,11 @@ draft = st.text_area(
 )
 
 
+default_ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
 ollama_url = st.sidebar.text_input(
-    "Book Review",
-    value="http://localhost:11434/v1",
-    help="URL of your local Ollama instance.",
+    "Ollama Base URL",
+    value=default_ollama_url,
+    help="URL of your Ollama instance. Set the OLLAMA_BASE_URL env var to change the default.",
 )
 
 generate = st.button("Generate Review", type="primary", disabled=not (title and author and draft))
@@ -36,9 +39,42 @@ generate = st.button("Generate Review", type="primary", disabled=not (title and 
 if generate:
     with st.spinner("Generating your review..."):
         try:
-            review = get_book_review(title, author, draft, base_url=ollama_url)
-            st.divider()
-            st.subheader("Your 小红书 Review")
-            st.markdown(review)
+            st.session_state.review = get_book_review(title, author, draft, base_url=ollama_url)
+            st.session_state.review_title = title
+            st.session_state.review_author = author
         except Exception as e:
             st.error(f"Failed to generate review: {e}")
+
+if st.session_state.get("review"):
+    st.divider()
+    st.subheader("Your 小红书 Review")
+    st.markdown(st.session_state.review)
+
+    st.divider()
+    st.markdown("**Not satisfied? Click what you'd like to improve:**")
+
+    IMPROVEMENT_OPTIONS = {
+        "✨ More Engaging": "Make it more captivating and lively, with stronger hooks and more compelling language to draw readers in",
+        "✂️ More Concise": "Make it tighter and more concise, removing any redundancy while keeping all key insights",
+        "🗣️ More Personal": "Strengthen the first-person personal voice with more authentic self-expression and personal perspective",
+        "💖 More Emotional": "Make it more heartfelt and emotionally resonant, with deeper reflection on how the book made you feel",
+        "😄 Add Humor": "Weave in wit and light humor to make the review more entertaining and fun to read",
+        "📐 Better Structure": "Improve the overall structure and paragraph flow for smoother, easier readability",
+    }
+
+    cols = st.columns(3)
+    for i, (label, instruction) in enumerate(IMPROVEMENT_OPTIONS.items()):
+        with cols[i % 3]:
+            if st.button(label, key=f"improve_{label}", use_container_width=True):
+                with st.spinner(f"Refining your review..."):
+                    try:
+                        st.session_state.review = refine_book_review(
+                            st.session_state.review_title,
+                            st.session_state.review_author,
+                            st.session_state.review,
+                            instruction,
+                            base_url=ollama_url,
+                        )
+                        st.rerun()
+                    except Exception as e:
+                        st.error(f"Failed to refine review: {e}")
