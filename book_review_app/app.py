@@ -4,7 +4,7 @@ import streamlit as st
 from review_agent import get_book_review, refine_book_review
 
 st.set_page_config(
-    page_title="📚 Joey's Book Review Agent",
+    page_title="Joey's Book Review Agent",
     page_icon="📚",
     layout="centered",
 )
@@ -54,11 +54,10 @@ if st.session_state.get("review"):
     st.markdown("**Not satisfied? Click what you'd like to improve:**")
 
     IMPROVEMENT_OPTIONS = {
-        "✨ More Engaging": "Make it more captivating and lively, with stronger hooks and more compelling language to draw readers in",
+        "✨ More Engaging": "Make it more captivating and lively, with stronger hooks and more compelling language to draw readers in. Use more emojis to add visual flair and energy",
         "✂️ More Concise": "Make it tighter and more concise, removing any redundancy while keeping all key insights",
-        "🗣️ More Personal": "Strengthen the first-person personal voice with more authentic self-expression and personal perspective",
-        "💖 More Emotional": "Make it more heartfelt and emotionally resonant, with deeper reflection on how the book made you feel",
-        "😄 Add Humor": "Weave in wit and light humor to make the review more entertaining and fun to read",
+        " More Emotional": "Make it more heartfelt and emotionally resonant, with deeper reflection on how the book made you feel",
+        "😄 Add Humor": "Weave in wit and light humor to make the review more entertaining and fun to read. Sprinkle in more emojis to amplify the playful tone",
         "📐 Better Structure": "Improve the overall structure and paragraph flow for smoother, easier readability",
     }
 

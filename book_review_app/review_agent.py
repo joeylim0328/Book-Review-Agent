@@ -4,7 +4,8 @@ SYSTEM_PROMPT = """You are an expert at writing engaging book reviews for 小红
 You understand 小红书's audience: young Chinese readers who prefer authentic, conversational content 
 with personal insights rather than formal literary analysis."""
 
-REVIEW_REQUIREMENTS = """1. All content should be in natural, fluent Chinese
+REVIEW_REQUIREMENTS = """
+1. All content should be in natural, fluent Chinese
 2. Maintain the personal voice and genuine opinions from the original
 3. Use an authentic, conversational tone - like chatting with a friend, not writing an essay
 4. Structure with natural paragraph breaks (shorter paragraphs work better on 小红书)
@@ -13,7 +14,8 @@ REVIEW_REQUIREMENTS = """1. All content should be in natural, fluent Chinese
 7. Output entirely in Chinese
 8. Keep it under 1000 Chinese characters if possible
 9. Emojis are acceptable but use them sparingly - don't overdo it
-10. The quote at the end should be remained as English."""
+10. The quote at the end should be remained as English.
+"""
 
 REVIEW_STRUCTURE = """Structure the review naturally in paragraph form: Start with an introduction about why you started reading, author background, or novel context. Follow with a plot summary covering the main storyline in 2-3 paragraphs. Then share your personal thoughts about what you liked or didn't like and discuss key themes. Include your recommendation on whether you'd suggest this book to others. End with a closing quote from the novel.
 
