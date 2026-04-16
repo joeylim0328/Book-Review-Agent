@@ -62,7 +62,7 @@ if st.session_state.get("review"):
     IMPROVEMENT_OPTIONS = {
         "✨ More Engaging": "Make it more captivating and lively, with stronger hooks and more compelling language to draw readers in. Use more emojis to add visual flair and energy",
         "✂️ More Concise": "Make it tighter and more concise, removing any redundancy while keeping all key insights",
-        " More Emotional": "Make it more heartfelt and emotionally resonant, with deeper reflection on how the book made you feel",
+        "❤️ More Emotional": "Make it more heartfelt and emotionally resonant, with deeper reflection on how the book made you feel",
         "😄 Add Humor": "Weave in wit and light humor to make the review more entertaining and fun to read. Sprinkle in more emojis to amplify the playful tone",
         "📐 Better Structure": "Improve the overall structure and paragraph flow for smoother, easier readability",
     }
