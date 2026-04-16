@@ -42,14 +42,25 @@ draft = st.text_area(
 generate = st.button("Generate Review", type="primary")
 
 if generate:
-    with st.spinner("Generating your review..."):
-        try:
-            # st.session_state.review = get_book_review(title, author, draft, base_url=ollama_url)
-            st.session_state.review = get_book_review(title, author, draft)
-            st.session_state.review_title = title
-            st.session_state.review_author = author
-        except Exception as e:
-            st.error(f"Failed to generate review: {e}")
+    missing_fields = []
+    if not title.strip():
+        missing_fields.append("**Book Title**")
+    if not author.strip():
+        missing_fields.append("**Author**")
+    if not draft.strip():
+        missing_fields.append("**Draft Review**")
+
+    if missing_fields:
+        st.warning(f"Please fill in the following field(s): {', '.join(missing_fields)}")
+    else:
+        with st.spinner("Generating your review..."):
+            try:
+                # st.session_state.review = get_book_review(title, author, draft, base_url=ollama_url)
+                st.session_state.review = get_book_review(title, author, draft)
+                st.session_state.review_title = title
+                st.session_state.review_author = author
+            except Exception as e:
+                st.error(f"Failed to generate review: {e}")
 
 if st.session_state.get("review"):
     st.divider()
