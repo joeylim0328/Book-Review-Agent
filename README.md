@@ -4,7 +4,7 @@ An AI-powered tool that transforms draft book reviews into polished, engaging Ch
 
 ## Overview
 
-Book Review Agent takes your rough book review (in English, Chinese, or a mix of both) and refines it into a natural, conversational Chinese review that resonates with 小红书's young reader audience. It preserves your personal voice and genuine opinions while adapting the tone and structure for the platform.
+Book Review Agent takes your rough book review draft (in English, Chinese, or a mix of both) and refines it into a natural, conversational Chinese review that resonates with 小红书's young reader audience. It preserves your personal voice and genuine opinions while adapting the tone and structure for the platform.
 
 ## Features
 
@@ -26,20 +26,6 @@ Book Review Agent takes your rough book review (in English, Chinese, or a mix of
 - **Containerization**: Docker & Docker Compose
 - **Language**: Python 3.11
 
-## Project Structure
-
-```
-Book Review Agent/
-├── book_review_app/
-│   ├── app.py                # Streamlit web application
-│   ├── review_agent.py       # Core review generation & refinement logic
-│   ├── requirements.txt      # App dependencies
-│   └── Dockerfile            # Container configuration
-├── practice_book_summary.ipynb  # Jupyter notebook for prototyping
-├── docker-compose.yml        # Docker Compose configuration
-├── requirements.txt          # Development/notebook dependencies
-└── README.md
-```
 
 ## Getting Started
 
@@ -73,13 +59,6 @@ Book Review Agent/
 
 5. Open your browser at `http://localhost:8501`
 
-### Docker
-
-```bash
-docker compose up --build
-```
-
-The app will be available at `http://localhost:8501`.
 
 ## Usage
 
