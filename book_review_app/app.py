@@ -1,7 +1,10 @@
 import os
 
+from dotenv import load_dotenv
 import streamlit as st
 from review_agent import get_book_review, refine_book_review
+
+load_dotenv()
 
 st.set_page_config(
     page_title="Joey's Book Review Agent",
@@ -27,19 +30,22 @@ draft = st.text_area(
 )
 
 
-default_ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-ollama_url = st.sidebar.text_input(
-    "Ollama Base URL",
-    value=default_ollama_url,
-    help="URL of your Ollama instance. Set the OLLAMA_BASE_URL env var to change the default.",
-)
+# --- Ollama (local) ---
+# default_ollama_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+# ollama_url = st.sidebar.text_input(
+#     "Ollama Base URL",
+#     value=default_ollama_url,
+#     help="URL of your Ollama instance. Set the OLLAMA_BASE_URL env var to change the default.",
+# )
 
-generate = st.button("Generate Review", type="primary", disabled=not (title and author and draft))
+
+generate = st.button("Generate Review", type="primary")
 
 if generate:
     with st.spinner("Generating your review..."):
         try:
-            st.session_state.review = get_book_review(title, author, draft, base_url=ollama_url)
+            # st.session_state.review = get_book_review(title, author, draft, base_url=ollama_url)
+            st.session_state.review = get_book_review(title, author, draft)
             st.session_state.review_title = title
             st.session_state.review_author = author
         except Exception as e:
@@ -67,12 +73,18 @@ if st.session_state.get("review"):
             if st.button(label, key=f"improve_{label}", use_container_width=True):
                 with st.spinner(f"Refining your review..."):
                     try:
+                        # st.session_state.review = refine_book_review(
+                        #     st.session_state.review_title,
+                        #     st.session_state.review_author,
+                        #     st.session_state.review,
+                        #     instruction,
+                        #     base_url=ollama_url,
+                        # )
                         st.session_state.review = refine_book_review(
                             st.session_state.review_title,
                             st.session_state.review_author,
                             st.session_state.review,
                             instruction,
-                            base_url=ollama_url,
                         )
                         st.rerun()
                     except Exception as e:

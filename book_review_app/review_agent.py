@@ -1,8 +1,18 @@
+import os
+from dotenv import load_dotenv
 from openai import OpenAI
+import google.generativeai as genai
+
+# Load environment variables
+load_dotenv()
 
 SYSTEM_PROMPT = """You are an expert at writing engaging book reviews for 小红书 (Xiaohongshu). 
 You understand 小红书's audience: young Chinese readers who prefer authentic, conversational content 
 with personal insights rather than formal literary analysis."""
+
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
+model = genai.GenerativeModel("gemini-2.5-flash", system_instruction=SYSTEM_PROMPT)
+
 
 REVIEW_REQUIREMENTS = """
 1. All content should be in natural, fluent Chinese
@@ -22,7 +32,8 @@ REVIEW_STRUCTURE = """Structure the review naturally in paragraph form: Start wi
 Style: Make it sound like a genuine reader sharing their thoughts, not a formal book report. Feel free to use colloquial expressions, rhetorical questions, or even a bit of humor if it fits the tone."""
 
 
-def get_book_review(title: str, author: str, draft_review: str, base_url: str = "http://localhost:11434/v1") -> str:
+# def get_book_review(title: str, author: str, draft_review: str, base_url: str = "http://localhost:11434/v1") -> str:
+def get_book_review(title: str, author: str, draft_review: str) -> str:
     """
     Refine a book review draft (mixed Chinese/English) into a polished Chinese review for 小红书.
 
@@ -30,12 +41,13 @@ def get_book_review(title: str, author: str, draft_review: str, base_url: str = 
         title: Book title
         author: Book author
         draft_review: User's draft review (can be mixed Chinese and English)
-        base_url: Ollama API base URL
+        api_key: Gemini API key
+        # base_url: Ollama API base URL
 
     Returns:
         Polished Chinese book review suitable for 小红书
     """
-    client = OpenAI(base_url=base_url, api_key="ollama")
+    # # client = OpenAI(base_url=base_url, api_key="ollama")
 
     user_prompt = f"""Transform this draft book review of "{title}" by {author} into a polished 
 Chinese review suitable for 小红书.
@@ -50,15 +62,11 @@ Requirements:
 
 The goal is to create an engaging review that resonates with 小红书's audience while faithfully reflecting the content and spirit of the original draft."""
 
-    response = client.chat.completions.create(
-        model="gpt-oss",
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
+    response = model.generate_content(
+        contents=[{"role": "user", "parts": [{"text": user_prompt}]}]
     )
-
-    return response.choices[0].message.content
+    
+    return response.text
 
 
 def refine_book_review(
@@ -66,7 +74,7 @@ def refine_book_review(
     author: str,
     current_review: str,
     improvement: str,
-    base_url: str = "http://localhost:11434/v1",
+    # base_url: str = "http://localhost:11434/v1",
 ) -> str:
     """
     Refine an existing 小红书 book review based on a requested improvement.
@@ -76,12 +84,14 @@ def refine_book_review(
         author: Book author
         current_review: The review to refine
         improvement: Specific improvement instruction
-        base_url: Ollama API base URL
+        api_key: Gemini API key
+        # base_url: Ollama API base URL
 
     Returns:
         Refined Chinese book review
     """
-    client = OpenAI(base_url=base_url, api_key="ollama")
+    # client = OpenAI(base_url=base_url, api_key="ollama")
+
 
     user_prompt = f"""Here is an existing 小红书 book review for "{title}" by {author}:
 
@@ -96,12 +106,17 @@ The rewritten review must still follow these requirements:
 
 {REVIEW_STRUCTURE}"""
 
-    response = client.chat.completions.create(
-        model="gpt-oss",
-        messages=[
-            {"role": "system", "content": SYSTEM_PROMPT},
-            {"role": "user", "content": user_prompt},
-        ],
-    )
+    # response = client.chat.completions.create(
+    #     # model="gpt-oss",  # Ollama
+    #     model=GEMINI_MODEL,
+    #     messages=[
+    #         {"role": "system", "content": SYSTEM_PROMPT},
+    #         {"role": "user", "content": user_prompt},
+    #     ],
+    # )
 
-    return response.choices[0].message.content
+    response = model.generate_content(
+        contents=[{"role": "user", "parts": [{"text": user_prompt}]}]
+    )
+    
+    return response.text
