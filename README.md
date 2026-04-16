@@ -2,6 +2,8 @@
 
 An AI-powered tool that transforms draft book reviews into polished, engaging Chinese reviews styled for **小红书 (Xiaohongshu)** — China's popular lifestyle and social media platform.
 
+Link to website: https://book-review-agent-cyapz8uzmalzfyuvjlws54.streamlit.app/ 
+
 ## Overview
 
 Book Review Agent takes your rough book review draft (in English, Chinese, or a mix of both) and refines it into a natural, conversational Chinese review that resonates with 小红书's young reader audience. It preserves your personal voice and genuine opinions while adapting the tone and structure for the platform.
