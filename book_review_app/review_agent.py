@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-from openai import OpenAI
 import google.generativeai as genai
 
 # Load environment variables
