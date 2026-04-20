@@ -68,6 +68,37 @@ The goal is to create an engaging review that resonates with 小红书's audienc
     return response.text
 
 
+def generate_hashtags(title: str, author: str, review: str) -> str:
+    """
+    Generate suggested 小红书 hashtags based on the book and review content.
+
+    Args:
+        title: Book title
+        author: Book author
+        review: The generated review text
+
+    Returns:
+        A string of 5-8 relevant hashtags
+    """
+    user_prompt = f"""Based on this 小红书 book review for "{title}" by {author}, generate 5-8 relevant hashtags in Chinese that would help this post get discovered on 小红书.
+
+Review:
+{review}
+
+Requirements:
+1. Each hashtag should start with #
+2. Include a mix of general reading hashtags (e.g., #书评, #好书推荐) and book-specific ones
+3. Keep hashtags concise (2-5 characters each, excluding the #)
+4. Output ONLY the hashtags separated by spaces, nothing else
+5. All hashtags must be in Chinese"""
+
+    response = model.generate_content(
+        contents=[{"role": "user", "parts": [{"text": user_prompt}]}]
+    )
+
+    return response.text.strip()
+
+
 def refine_book_review(
     title: str,
     author: str,

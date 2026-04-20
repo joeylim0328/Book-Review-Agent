@@ -3,7 +3,7 @@ import os
 
 from dotenv import load_dotenv
 import streamlit as st
-from review_agent import get_book_review, refine_book_review
+from review_agent import get_book_review, generate_hashtags, refine_book_review
 
 load_dotenv()
 
@@ -60,6 +60,7 @@ if generate:
                 st.session_state.review = get_book_review(title, author, draft)
                 st.session_state.review_title = title
                 st.session_state.review_author = author
+                st.session_state.hashtags = generate_hashtags(title, author, st.session_state.review)
             except Exception as e:
                 st.error(f"Failed to generate review: {e}")
 
@@ -105,6 +106,11 @@ if st.session_state.get("review"):
     </script>
     """
     st.components.v1.html(copy_js, height=50)
+
+    # --- Suggested Hashtags ---
+    if st.session_state.get("hashtags"):
+        st.markdown("**Suggested Hashtags:**")
+        st.code(st.session_state.hashtags, language=None)
 
     st.divider()
     st.markdown("**Not satisfied? Click what you'd like to improve:**")
