@@ -1,3 +1,4 @@
+import html as html_mod
 import os
 
 from dotenv import load_dotenv
@@ -66,6 +67,44 @@ if st.session_state.get("review"):
     st.divider()
     st.subheader("Your 小红书 Review")
     st.markdown(st.session_state.review)
+
+    # --- Copy to Clipboard ---
+    escaped_review = html_mod.escape(st.session_state.review).replace("`", "\\`").replace("\n", "\\n")
+    copy_js = f"""
+    <style>
+        .copy-btn {{
+            background-color: #ff4b4b;
+            color: white;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s;
+        }}
+        .copy-btn:hover {{
+            background-color: #e03e3e;
+        }}
+        .copy-btn.copied {{
+            background-color: #21c354;
+        }}
+    </style>
+    <button class="copy-btn" onclick="copyReview(this)">📋 Copy Review</button>
+    <script>
+        function copyReview(btn) {{
+            const text = `{escaped_review}`;
+            navigator.clipboard.writeText(text).then(() => {{
+                btn.textContent = '✅ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {{
+                    btn.textContent = '📋 Copy Review';
+                    btn.classList.remove('copied');
+                }}, 2000);
+            }});
+        }}
+    </script>
+    """
+    st.components.v1.html(copy_js, height=50)
 
     st.divider()
     st.markdown("**Not satisfied? Click what you'd like to improve:**")
