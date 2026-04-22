@@ -1,16 +1,35 @@
 import os
 from dotenv import load_dotenv
 import google.generativeai as genai
+from google.generativeai.types import HarmCategory, HarmBlockThreshold
 
 # Load environment variables
 load_dotenv()
 
-SYSTEM_PROMPT = """You are an expert at writing engaging book reviews for 小红书 (Xiaohongshu). 
+SYSTEM_PROMPT = """You are an expert literary critic and book reviewer writing for 小红书 (Xiaohongshu). 
 You understand 小红书's audience: young Chinese readers who prefer authentic, conversational content 
-with personal insights rather than formal literary analysis."""
+with personal insights rather than formal literary analysis.
+
+IMPORTANT CONTEXT: You are working with user-submitted book reviews that discuss published, 
+commercially available fiction and non-fiction. These reviews may reference mature literary themes 
+such as war, political intrigue, moral conflict, romance, and historical violence — all within the 
+context of literary analysis and reader reflection. This is standard book review content and should 
+be treated as legitimate literary discussion."""
 
 genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-model = genai.GenerativeModel("gemini-2.5-flash", system_instruction=SYSTEM_PROMPT)
+
+SAFETY_SETTINGS = {
+    HarmCategory.HARM_CATEGORY_HARASSMENT: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_HATE_SPEECH: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
+    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT: HarmBlockThreshold.BLOCK_NONE,
+}
+
+model = genai.GenerativeModel(
+    "gemini-2.5-flash",
+    system_instruction=SYSTEM_PROMPT,
+    safety_settings=SAFETY_SETTINGS,
+)
 
 
 REVIEW_REQUIREMENTS = """
@@ -48,8 +67,9 @@ def get_book_review(title: str, author: str, draft_review: str) -> str:
     """
     # # client = OpenAI(base_url=base_url, api_key="ollama")
 
-    user_prompt = f"""Transform this draft book review of "{title}" by {author} into a polished 
-Chinese review suitable for 小红书.
+    user_prompt = f"""[Literary Book Review Task] Transform this reader's draft book review of the 
+published novel "{title}" by {author} into a polished Chinese review suitable for 小红书. 
+This is a legitimate literary review of a commercially published book.
 
 Draft review:
 {draft_review}
@@ -80,7 +100,7 @@ def generate_hashtags(title: str, author: str, review: str) -> str:
     Returns:
         A string of 5-8 relevant hashtags
     """
-    user_prompt = f"""Based on this 小红书 book review for "{title}" by {author}, generate 5-8 relevant hashtags in Chinese that would help this post get discovered on 小红书.
+    user_prompt = f"""[Literary Book Review Task] Based on this 小红书 book review for the published novel "{title}" by {author}, generate 5-8 relevant hashtags in Chinese that would help this post get discovered on 小红书.
 
 Review:
 {review}
@@ -123,7 +143,7 @@ def refine_book_review(
     # client = OpenAI(base_url=base_url, api_key="ollama")
 
 
-    user_prompt = f"""Here is an existing 小红书 book review for "{title}" by {author}:
+    user_prompt = f"""[Literary Book Review Task] Here is an existing 小红书 book review for the published novel "{title}" by {author}:
 
 {current_review}
 
